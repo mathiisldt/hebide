@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2B215B">
+<meta name="description" content="Baséo : entraînement aux conversions binaires, décimales et hexadécimales.">
+<title>Baséo — Change de base. Gagne en logique.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;550;600;650;700;750;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}html,body,#root{margin:0;min-height:100%;width:100%}body{background:#F7F6FB;font-family:Inter,Arial,sans-serif}button,input{font-family:inherit}button:focus-visible{outline:2px solid #78EBCD;outline-offset:3px}
+
+/* Tablet: wider breathing room, while retaining the touch-first layout. */
+@media (min-width:600px) and (max-width:899px){
+ .baseo-shell{max-width:720px!important}
+ .baseo-main{padding:36px 40px 32px!important}
+ .baseo-hero{padding:30px!important}
+ .baseo-hero h1{font-size:34px!important}
+ .baseo-demo>section{padding:26px!important}
+ .baseo-demo-number{font-size:30px!important}
+ .baseo-nav{width:calc(100% - 80px);margin:0 auto 20px;border:1px solid var(--baseo-navLine);border-radius:20px;bottom:16px!important}
+}
+/* Desktop: purpose-built two-column home and focused exercise pages. */
+@media (min-width:900px){
+ .baseo-shell{max-width:1200px!important}
+ .baseo-main{width:100%;padding:42px 48px 36px!important;margin:0 auto}
+ .baseo-home{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);grid-template-areas:"header header" "hero demo" "start order";column-gap:32px;row-gap:22px;align-items:stretch}
+ .baseo-home-header{grid-area:header;margin-bottom:34px!important}
+ .baseo-home-header>div:first-child{font-size:28px!important}
+ .baseo-hero{grid-area:hero;margin:0!important;padding:34px!important;min-height:328px;display:flex;flex-direction:column;justify-content:center;border-radius:30px!important}
+ .baseo-hero h1{font-size:clamp(30px,3vw,40px)!important;line-height:1.14!important;letter-spacing:-1.15px!important;margin-bottom:18px!important}
+ .baseo-hero p{font-size:14px!important;line-height:1.65}
+ .baseo-demo{grid-area:demo;min-width:0}
+ .baseo-demo>section{height:100%;min-height:328px;margin:0!important;padding:28px!important;border:1px solid var(--baseo-line);border-radius:30px!important}
+ .baseo-demo>section>div>div:first-child strong{font-size:16px!important}
+ .baseo-demo>section p{font-size:13px!important;line-height:1.7!important}
+ .baseo-demo button[aria-label^="Explorer"]{min-height:126px}
+ .baseo-demo-number{font-size:30px!important}
+ .baseo-start{grid-area:start;align-self:center}
+ .baseo-start>button{min-height:58px!important;font-size:15px!important;border-radius:16px!important}
+ .baseo-order{grid-area:order;margin:0!important;align-self:center;gap:8px!important}
+ .baseo-order>span{padding:12px 4px!important;font-size:12px!important;border-radius:10px!important}
+ .baseo-nav{width:360px;max-width:calc(100% - 48px);align-self:center;margin:0 auto 24px;padding:10px 12px!important;bottom:20px!important;border:1px solid var(--baseo-navLine);border-radius:22px;box-shadow:0 8px 28px rgba(0,0,0,.07)}
+ .baseo-nav button{flex-direction:row!important;justify-content:center;gap:7px!important;font-size:12px!important;padding:7px 4px}
+ .baseo-nav button>span{padding:7px 10px!important}
+ .baseo-main:not(.baseo-page-home){max-width:700px;padding-top:48px!important}
+ .baseo-page-results,.baseo-page-review{max-width:860px!important}
+ .baseo-main:not(.baseo-page-home)>section{padding:26px!important}
+ .baseo-main input{min-height:60px}
+}
+@media (min-width:1400px){
+ .baseo-main{padding-top:54px!important}
+ .baseo-hero,.baseo-demo>section{min-height:360px}
+ .baseo-hero h1{font-size:42px!important}
+ .baseo-demo-number{font-size:34px!important}
+}
+@media (prefers-reduced-motion:reduce){
+ button,input{scroll-behavior:auto}
+}
+
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1?external=react",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
+    "framer-motion": "https://esm.sh/framer-motion@11.18.2?external=react,react-dom",
+    "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime?external=react",
+    "react/jsx-dev-runtime": "https://esm.sh/react@18.3.1/jsx-dev-runtime?external=react"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<noscript>Activez JavaScript pour utiliser Baséo.</noscript>
+<script type="text/babel" data-type="module" data-presets="react">
+import {createRoot} from "react-dom/client";
+import * as React from "react"
+import {motion, AnimatePresence, MotionConfig, useReducedMotion} from "framer-motion"
+const ink="var(--baseo-text, #2B215B)", muted="var(--baseo-muted, #868292)", mint="var(--baseo-mint, #78EBCD)", pale="var(--baseo-pale, #EFEBFA)";
+const bases=[2,10,16], names={2:"BIN",10:"DÉC",16:"HEX"};
+function createQuestions(){
+const pairs=[[2,16],[16,2],[2,10],[10,2],[16,10],[10,16]];
+const pools=pairs.map(()=>{
+const numbers=Array.from({length:31},(_,i)=>i+1);
+for(let i=numbers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[numbers[i],numbers[j]]=[numbers[j],numbers[i]]}
+return numbers.slice(0,10);
+});
+const offset=0;
+return Array.from({length:10},(_,cycle)=>Array.from({length:6},(_,step)=>{const i=(step+offset)%6;const [from,to]=pairs[i];return {n:pools[i][cycle],from,to,answer:null,correct:false}})).flat();
+}
+const conversionIndex=(q)=>[[2,16],[16,2],[2,10],[10,2],[16,10],[10,16]].findIndex(([from,to])=>q.from===from&&q.to===to);
+const groupNames=["BH","HB","BD","DB","HD","DH"];
+const groupLabels=["Binaire → Hexadécimal","Hexadécimal → Binaire","Binaire → Décimal","Décimal → Binaire","Hexadécimal → Décimal","Décimal → Hexadécimal"];
+const grade=(questions)=>questions.filter(x=>x.correct).length/3;
+const displayGrade=(questions)=>grade(questions).toLocaleString("fr-FR",{maximumFractionDigits:2});
+const fmt=(n,b)=>n.toString(b).toUpperCase();
+const fmtAnswer=(n,b)=>b===2?fmt(n,b).padStart(8,"0"):fmt(n,b);
+const valid=(s,b)=>s.length>0&&(b===2?/^[01]+$/:b===10?/^[0-9]+$/:/^[0-9a-f]+$/i).test(s);
+function Icon({name,size=20}){const paths={arrow:"M4 12h16m-6-6 6 6-6 6",back:"M20 12H4m6-6-6 6 6 6",swap:"M4 7h16l-4-4M20 17H4l4 4",grid:"M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z",chart:"M4 20V12m6 8V8m6 12V4m5 16H2",check:"m5 12 4 4L19 6",close:"m6 6 12 12M6 18 18 6",bulb:"M9 19h6m-5 3h4M8 14a7 7 0 1 1 8 0l-1 3H9z",repeat:"M20 8a8 8 0 1 0 0 9M20 3v5h-5",copy:"M9 8h12v13H9zM5 16H3V3h12v2",bolt:"m13 2-9 12h7l-1 8 10-13h-8z"};return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]||paths.grid}/></svg>}
+
+function Mascot(){
+const entranceRef=React.useRef(null);
+const floatRef=React.useRef(null);
+const [replay,setReplay]=React.useState(0);
+React.useEffect(()=>{
+const button=entranceRef.current,illustration=floatRef.current;
+if(!button||!illustration||typeof button.animate!=="function")return;
+const entrance=button.animate([
+{offset:0,transform:"translate(-18px,70px) rotate(-22deg) scale(0.45)",opacity:0},
+{offset:0.18,transform:"translate(-14px,50px) rotate(-14deg) scale(0.7)",opacity:1},
+{offset:0.66,transform:"translate(-2px,6px) rotate(-2deg) scale(0.98)",opacity:1},
+{offset:1,transform:"translate(0px,0px) rotate(0deg) scale(1)",opacity:1}
+],{duration:1450,delay:180,easing:"cubic-bezier(0.12,0.72,0.2,1)",fill:"both"});
+const floating=illustration.animate([
+{transform:"translateY(0px) rotate(0deg)"},
+{transform:"translateY(-4px) rotate(1.5deg)"},
+{transform:"translateY(0px) rotate(0deg)"}
+],{duration:3600,delay:1700,iterations:Infinity,easing:"ease-in-out"});
+return ()=>{entrance.cancel();floating.cancel()};
+},[replay]);
+return <button ref={entranceRef} type="button" aria-label="Rejouer l’arrivée de la mascotte" onClick={()=>setReplay(n=>n+1)} style={{position:"absolute",right:-22,top:-52,width:140,height:140,padding:0,border:0,background:"transparent",cursor:"pointer",touchAction:"manipulation",willChange:"transform"}}>
+<svg ref={floatRef} viewBox="-12 -6 98 98" width="140" height="140" role="img" aria-label="Mascotte Baséo souriante, allongée sur le dos"><g transform="rotate(-70 36 44)">
+
+<path d="M22 63 C21 70 16 73 8 67 M49 63 C49 73 42 78 34 72" fill="none" strokeLinejoin="round" stroke="#78EBCD" strokeWidth="7" strokeLinecap="round"/>
+<path d="M13 44 C2 42 1 29 17 25 M58 39 C70 41 70 52 56 54" strokeLinejoin="round" fill="none" stroke="#78EBCD" strokeWidth="6" strokeLinecap="round"/>
+
+<path d="M35 16V8" stroke="#78EBCD" strokeWidth="3" strokeLinecap="round"/><circle cx="35" cy="6" r="4" fill="#78EBCD"/>
+<rect x="12" y="17" width="47" height="49" rx="17" fill="#78EBCD"/>
+<path d="M20 23q16-8 29 0" fill="none" stroke="#C6FFEF" strokeWidth="3" strokeLinecap="round"/>
+<rect x="19" y="30" width="33" height="22" rx="10" fill="#2B215B"/>
+<rect x="26" y="36" width="4" height="7" rx="2" fill="#FFFFFF"/><rect x="41" y="36" width="4" height="7" rx="2" fill="#FFFFFF"/>
+<path d="M32 45q4 4 8 0" stroke="#78EBCD" strokeWidth="2" fill="none" strokeLinecap="round"/>
+<circle cx="22" cy="47" r="3" fill="#78EBCD" opacity=".5"/><circle cx="49" cy="47" r="3" fill="#78EBCD" opacity=".5"/>
+<path d="M29 58h13" stroke="#2B215B" strokeWidth="2" strokeLinecap="round" opacity=".35"/>
+</g></svg>
+</button>
+}
+
+function Logo(){return <div style={{display:"flex",gap:9,alignItems:"center",fontSize:24,fontWeight:750}}><span style={{background:"var(--baseo-primary)",color:mint,borderRadius:10,padding:7,display:"flex",alignItems:"center",gap:2,fontSize:16}}>01<Icon name="swap" size={16}/></span>baséo</div>}
+function Button({children,onClick,light=false,disabled=false}){return <motion.button whileTap={disabled?undefined:{scale:0.96}} whileHover={disabled?undefined:{filter:"brightness(1.13)"}} transition={{duration:0.16}} disabled={disabled} onClick={onClick} style={{width:"100%",minHeight:52,border:0,borderRadius:13,background:disabled?"var(--baseo-disabled, #E6E3ED)":light?pale:"var(--baseo-primary)",color:disabled?muted:light?ink:"white",font:"inherit",fontWeight:600,cursor:disabled?"default":"pointer",padding:"14px 18px",display:"flex",gap:10,alignItems:"center",justifyContent:"center"}}>{children}</motion.button>}
+function Card({children,dark=false,green=false}){return <section style={{padding:18,borderRadius:22,background:dark?"var(--baseo-primary)":green?"var(--baseo-green, #E3FBF3)":"var(--baseo-surface)",color:dark?"white":ink,marginBottom:16}}>{children}</section>}
+function Small({children}){return <p style={{fontSize:12,color:muted,lineHeight:1.65,margin:"7px 0"}}>{children}</p>}
+
+function ConversionDemo(){
+const reduced=useReducedMotion();
+const [tick,setTick]=React.useState(0),[paused,setPaused]=React.useState(false),[manual,setManual]=React.useState(false);
+const running=!paused&&(!reduced||manual);
+React.useEffect(()=>{if(!running)return;const timer=setInterval(()=>setTick(t=>t+1),1800);return ()=>clearInterval(timer)},[running]);
+const list=[2,16,10],active=tick%3,n=[26,15,47,21][Math.floor(tick/3)%4];
+return <div>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{display:"flex",alignItems:"center",gap:8,color:"var(--baseo-accent)"}}><motion.span animate={reduced||paused?{opacity:1}:{opacity:[1,.35,1]}} transition={{duration:1.8,repeat:Infinity}} style={{width:7,height:7,background:mint,borderRadius:10}}/><strong style={{fontSize:13}}>Un nombre, trois écritures.</strong></div></div>
+<Small>C’est le même nombre, écrit en binaire, en hexadécimal et en décimal.</Small>
+<div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:8,marginTop:20}}>
+{list.map((b,i)=><motion.button key={b} aria-label={"Explorer la base "+b} aria-pressed={active===i} onClick={()=>{setPaused(true);setTick(Math.floor(tick/3)*3+i)}} animate={{y:!reduced&&active===i?-5:0,backgroundColor:active===i?"var(--baseo-primary)":"var(--baseo-pale)"}} transition={{duration:.35}} whileTap={{scale:.96}} style={{border:0,borderRadius:16,padding:"18px 4px",textAlign:"center",cursor:"pointer",color:active===i?"white":ink,minWidth:0,boxShadow:active===i?"0px 8px 16px rgba(43,33,91,0.14)":"none"}}>
+<span style={{fontSize:10,color:active===i?mint:"var(--baseo-accent)",fontWeight:650}}>{names[b]} · {b}</span>
+<div style={{overflow:"hidden",height:37,marginTop:13,display:"flex",alignItems:"center",justifyContent:"center"}}><AnimatePresence initial={false} mode="wait"><motion.span key={n} initial={{y:reduced?0:12,opacity:0}} animate={{y:0,opacity:1}} exit={{y:reduced?0:-12,opacity:0}} transition={{duration:.2}} className="baseo-demo-number" style={{fontFamily:"inherit",fontSize:b===2?20:28,fontWeight:active===i?750:550,transition:"font-weight 220ms ease"}}>{fmt(n,b)}</motion.span></AnimatePresence></div></motion.button>)}
+</div>
+<div style={{display:"flex",alignItems:"center",gap:8,margin:"16px 4px 10px"}}>{list.map((b,i)=><div key={b} style={{height:3,flex:1,borderRadius:4,overflow:"hidden",background:pale}}><motion.div animate={{opacity:active===i?1:.18,scaleX:active===i?1:.25}} transition={{duration:.5}} style={{height:"100%",background:mint,transformOrigin:"left"}}/></div>)}</div>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}><div style={{display:"flex",gap:6,alignItems:"center",color:"var(--baseo-success)",fontSize:10}}><Icon name="check" size={14}/>Toujours la même valeur.</div><button onClick={()=>{if(reduced&&!manual){setManual(true);setPaused(false)}else setPaused(p=>!p)}} aria-label={running?"Mettre la démonstration en pause":"Lancer la démonstration"} style={{border:0,background:"none",color:muted,fontSize:10,padding:"8px 2px",cursor:"pointer",fontFamily:"inherit"}}>{running?"Pause":"Animer"}</button></div>
+</div>
+}
+
+
+function ExerciseOverview({session}){
+const current=conversionIndex(session.qs[session.index]);
+return <aside className="baseo-overview" aria-label="Avancement des exercices">
+<style>{`
+.baseo-workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.baseo-exercise{min-width:0}
+.baseo-overview{background:var(--baseo-surface);border:1px solid var(--baseo-line);border-radius:20px;padding:16px;height:fit-content}
+.baseo-overview-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;color:var(--baseo-text);font:inherit;font-size:14px;font-weight:650;text-align:left;padding:0;cursor:pointer}
+.baseo-overview-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}
+.baseo-overview-row{padding:9px 8px;border-radius:12px;min-width:0}
+.baseo-overview-label{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:10px;line-height:1.4;min-height:28px}
+.baseo-overview-count{white-space:nowrap;font-size:13px;font-weight:700}
+.baseo-overview-short{display:inline}
+.baseo-overview-full{display:none}
+@media(max-width:899px){
+.baseo-workspace{gap:12px}
+.baseo-overview{padding:9px 10px;border-radius:13px}
+.baseo-overview-heading{font-size:11px}
+.baseo-overview-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;margin-top:6px}
+.baseo-overview-row{padding:5px 6px;border-radius:7px}
+.baseo-overview-label{font-size:10px;min-height:13px;gap:3px}
+.baseo-overview-count{font-size:10px}
+.baseo-overview-row>.baseo-overview-label+div{margin-top:4px!important;height:2px!important}
+}
+@media(min-width:900px){
+.baseo-overview-short{display:none}
+.baseo-overview-full{display:inline}
+.baseo-shell-quiz,.baseo-shell-correction{max-width:1100px!important}
+.baseo-main.baseo-page-quiz,.baseo-main.baseo-page-correction{max-width:1100px!important;padding:42px 32px!important;width:100%;margin:0 auto}
+.baseo-workspace{grid-template-columns:240px minmax(0,1fr);gap:32px;align-items:start}
+.baseo-overview{position:sticky;top:28px;padding:20px}
+.baseo-overview-heading{cursor:default;pointer-events:none}
+.baseo-overview-toggle{display:none}
+.baseo-overview-list{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;margin-top:16px}
+.baseo-overview-label{font-size:11px}
+.baseo-overview-row{padding:11px 10px}
+}
+`}</style>
+<div className="baseo-overview-heading" style={{cursor:"default"}}>Les exercices</div>
+<div className="baseo-overview-list">{groupNames.map((name,i)=>{
+const questions=session.qs.filter(question=>conversionIndex(question)===i);
+const done=questions.filter(question=>question.answer!==null||question.skipped).length;
+const active=current===i;
+return <div key={name} className="baseo-overview-row" aria-current={active?"step":undefined} style={{background:active?pale:"transparent",color:active?"var(--baseo-accent)":"var(--baseo-text)"}}>
+<div className="baseo-overview-label"><span style={{fontWeight:active?650:450}} title={groupLabels[i]}><span className="baseo-overview-short">{name}</span><span className="baseo-overview-full">{groupLabels[i]}</span></span><span className="baseo-overview-count">{done}/10</span></div>
+<div style={{height:4,background:"var(--baseo-track)",borderRadius:4,marginTop:8,overflow:"hidden"}}><div style={{height:"100%",width:(done*10)+"%",background:active?"var(--baseo-accent)":"var(--baseo-success)",borderRadius:4,transition:"width 220ms ease"}}/></div>
+</div>})}</div>
+</aside>
+}
+
+/**
+ * @framerSupportedLayoutWidth any
+ * @framerSupportedLayoutHeight auto
+ */
+function Baseo({style,title="Change de base. Gagne en logique.",initialTheme="light"}){
+const [dark,setDark]=React.useState(initialTheme==="dark");
+React.useEffect(()=>setDark(initialTheme==="dark"),[initialTheme]);
+const [page,setPage]=React.useState("home"),[input,setInput]=React.useState("2F"),[cb,setCb]=React.useState(16),[bits,setBits]=React.useState(true);
+const [session,setSession]=React.useState(null),[answer,setAnswer]=React.useState(""),[filter,setFilter]=React.useState(false),[saved,setSaved]=React.useState(false);
+React.useEffect(()=>{try{localStorage.removeItem("baseo-history");localStorage.removeItem("baseo-session")}catch{}},[]);
+const start=()=>{const qs=createQuestions();setSession({id:Date.now(),date:new Date().toLocaleString("fr-FR"),qs,index:0,draft:""});setReview(null);setAnswer("");setPage("quiz")};
+const q=session?.qs[session.index],total=session?.qs.length||60;
+const updateAnswer=(value)=>{setAnswer(value);setSession(current=>current?{...current,draft:value}:current)};
+const navigate=(p)=>{if(p==="home"){setSession(null);setReview(null);setAnswer("");}setPage(p);setSaved(false)};
+const validate=()=>{if(!valid(answer,q.to)||q.answer!==null)return;const qs=session.qs.map((x,i)=>i===session.index?{...x,answer:answer.toUpperCase(),correct:parseInt(answer,q.to)===q.n}:x);setSession({...session,qs});setPage("correction")};
+const next=()=>{setAnswer("");const qs=session.qs.map((question,i)=>i===session.index&&question.answer===null?{...question,skipped:true}:question);if(session.index+1>=total){const done={...session,qs,finished:true};setSession(null);setReview(done);setPage("results")}else{setSession({...session,qs,index:session.index+1,draft:""});setPage("quiz")}};
+const [review,setReview]=React.useState(null);
+const result=review||session;
+const heading=(text,sub,back="home")=><header style={{display:"flex",alignItems:"center",gap:12,marginBottom:26}}><button aria-label="Retour" onClick={()=>navigate(back)} style={{border:0,borderRadius:12,background:"var(--baseo-surface)",padding:10,color:ink,cursor:"pointer"}}><Icon name="back"/></button><div><strong style={{fontSize:18}}>{text}</strong><Small>{sub}</Small></div></header>;
+const progress=()=> <div style={{marginBottom:20}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12,gap:10}}><span style={{fontSize:10,color:"var(--baseo-accent)",background:pale,padding:"6px 10px",borderRadius:10,fontWeight:700}}>{groupNames[conversionIndex(q)]} · Cycle {Math.floor(session.index/6)+1} / 10</span><span style={{fontFamily:"inherit",fontSize:14,color:ink}}>{displayGrade(session.qs)} / 20</span></div><strong style={{fontSize:13}}>{groupLabels[conversionIndex(q)]}</strong><div style={{display:"flex",justifyContent:"space-between",fontSize:11,margin:"12px 0 10px",gap:10}}><strong>Conversion {session.index%6+1} sur 6</strong><span style={{color:muted}}>{session.index+1} / {total} au total</span></div><div style={{height:5,background:"var(--baseo-track)",borderRadius:5}}><div style={{height:5,width:((session.index+1)/total*100)+"%",transition:"width 250ms ease",background:"var(--baseo-accent)",borderRadius:5}}/></div></div>;
+const explain=(x)=> {const digits=fmt(x.n,x.from).split("");const weights=digits.map((_,i)=>Math.pow(x.from,digits.length-i-1));const terms=digits.map((d,i)=>({digit:parseInt(d,x.from),weight:weights[i]})).filter(item=>item.digit!==0);return <><strong>Pourquoi {fmtAnswer(x.n,x.to)} ?</strong><Small>{x.to===10?(x.from===2?"Chaque position vaut "+weights.join(", ")+". Garde les valeurs sous les chiffres 1, puis additionne-les.":"En partant de la droite, les positions valent 1, 16, 256… Multiplie chaque chiffre par sa valeur, puis additionne."):"Divise le nombre par "+x.to+" plusieurs fois. Note les restes, puis lis-les du dernier au premier."}</Small><p style={{fontFamily:"inherit",fontSize:16,fontWeight:600,lineHeight:1.8}}>{x.to===10?(terms.length?terms.map(item=>x.from===2?String(item.weight):item.weight===1?String(item.digit):item.digit+" × "+item.weight).join(" + "):"0")+" = "+x.n:x.n+" = "+Math.floor(x.n/x.to)+" × "+x.to+" + "+(x.n%x.to)}</p><div style={{borderTop:"1px solid var(--baseo-line, #EFEDF5)",paddingTop:15,fontFamily:"inherit",fontSize:22}}>{fmt(x.n,x.from)}<sub>{x.from}</sub> = {fmtAnswer(x.n,x.to)}<sub>{x.to}</sub></div></>};
+const segmented=(values,value,set)=><div style={{display:"flex",gap:6,margin:"9px 0 15px"}}>{values.map(v=><button key={v} onClick={()=>set(v)} style={{fontFamily:"inherit",flex:1,padding:"12px 3px",fontSize:11,border:"1px solid "+(v===value?"var(--baseo-border, #8571CA)":"transparent"),background:v===value?pale:"var(--baseo-soft, #F7F6FA)",color:v===value?"var(--baseo-accentText, #624CB7)":muted,borderRadius:10,cursor:"pointer"}}>{typeof v==="number"?names[v]+" "+v:v}</button>)}</div>;
+return <MotionConfig reducedMotion="user"><div style={{...style,...({"--baseo-text":dark?"#F0EDF9":"#2B215B","--baseo-muted":dark?"#ADA7BD":"#868292","--baseo-mint":dark?"#78EBCD":"#78EBCD","--baseo-pale":dark?"#302841":"#EFEBFA","--baseo-disabled":dark?"#383242":"#E6E3ED","--baseo-green":dark?"#183D35":"#E3FBF3","--baseo-track":dark?"#393145":"#E5E1EF","--baseo-accent":dark?"#B9A5FF":"#6951C6","--baseo-line":dark?"#3B3349":"#EFEDF5","--baseo-border":dark?"#A78EE4":"#8571CA","--baseo-soft":dark?"#241F30":"#F7F6FA","--baseo-accentText":dark?"#C8B6FF":"#624CB7","--baseo-background":dark?"#191520":"#F7F6FB","--baseo-success":dark?"#8BE5C9":"#398878","--baseo-onHeroMuted":dark?"#CBC2DF":"#C9C2DE","--baseo-heroTag":dark?"#443A70":"#443A70","--baseo-inputBorder":dark?"#AA91EC":"#7561C3","--baseo-error":dark?"#EEA4BE":"#B35D7B","--baseo-navLine":dark?"#352D42":"#EAE7F1","--baseo-surface":dark?"#25202F":"#FFFFFF","--baseo-primary":"#2B215B"}),colorScheme:dark?"dark":"light",transition:"background-color 220ms ease, color 220ms ease",width:"100%",minHeight:"100svh",background:"var(--baseo-background, #F7F6FB)",fontFamily:"Inter, sans-serif",color:ink,boxSizing:"border-box",WebkitTapHighlightColor:"transparent",overflowWrap:"anywhere"}}><div className={"baseo-shell baseo-shell-"+page} style={{maxWidth:430,width:"100%",margin:"0 auto",minHeight:"100svh",display:"flex",flexDirection:"column",background:"var(--baseo-background, #F7F6FB)"}}><AnimatePresence initial={false} mode="wait"><motion.main className={"baseo-main baseo-page-"+page} key={page+"-"+(page==="quiz"||page==="correction"?session?.index:"")} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-5}} transition={{duration:0.2,ease:"easeOut"}} style={{padding:"max(26px, env(safe-area-inset-top)) 20px 26px",flex:1}}>
+{page==="home"&&<div className="baseo-home"><div className="baseo-home-header" style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:36}}><Logo/><div role="group" aria-label="Apparence" style={{display:"flex",gap:3,padding:4,borderRadius:30,background:pale}}>{[["light","Clair"],["dark","Sombre"]].map(([value,label])=><motion.button key={value} aria-pressed={dark===(value==="dark")} onClick={()=>setDark(value==="dark")} whileTap={{scale:0.95}} style={{position:"relative",border:0,borderRadius:24,minHeight:36,padding:"7px 11px",fontSize:11,fontWeight:600,fontFamily:"inherit",cursor:"pointer",background:dark===(value==="dark")?"var(--baseo-surface)": "transparent",color:ink,transition:"background-color 200ms ease, color 200ms ease",boxShadow:dark===(value==="dark")?"0px 1px 4px rgba(0,0,0,0.08)":"none"}}>{label}</motion.button>)}</div></div><motion.section className="baseo-hero" initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{duration:.55,delay:.08}} style={{position:"relative",padding:22,borderRadius:24,marginBottom:18,background:"radial-gradient(ellipse at 110% 0%, rgba(120,235,205,0.20), transparent 65%), var(--baseo-primary)",color:"white",overflow:"visible"}}><div style={{display:"flex",alignItems:"flex-start",gap:8,paddingRight:52}}><h1 style={{flex:1,minWidth:0,fontWeight:600,fontSize:26,lineHeight:1.15,letterSpacing:-.7,margin:"2px 0 12px"}}>{title.split(". ").map((part,i)=><React.Fragment key={i}>{i>0&&<br/>}{part}{i===0?".":""}</React.Fragment>)}</h1><Mascot/></div><p style={{fontSize:12,color:"var(--baseo-onHeroMuted, #C9C2DE)",margin:0}}>Entraîne-toi à convertir les nombres.</p></motion.section><motion.div className="baseo-demo" initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{duration:.55,delay:.18}}><Card><ConversionDemo/></Card></motion.div><motion.div className="baseo-start" initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} transition={{duration:.5,delay:.3}}><Button onClick={start}>Commencer l’entraînement <motion.span animate={{x:[0,4,0]}} transition={{duration:1.8,repeat:Infinity,repeatDelay:2}} style={{display:"flex"}}><Icon name="arrow"/></motion.span></Button></motion.div><div className="baseo-order" style={{display:"flex",gap:5,marginTop:16}}>{groupNames.map(label=><span key={label} style={{flex:1,textAlign:"center",background:pale,padding:"7px 2px",borderRadius:8,fontSize:10,fontWeight:600,color:"var(--baseo-accent)"}}>{label}</span>)}</div></div>}
+
+{(page==="quiz"||page==="correction")&&session&&q&&<div className="baseo-workspace"><ExerciseOverview session={session}/><div className="baseo-exercise">{heading(page==="quiz"?"À toi de convertir":"La correction",(page==="quiz"?"Toutes les bases":"Toutes les bases · Correction"),"pause")}{progress()}{page==="quiz"?<><Card dark><div style={{textAlign:"center",padding:"8px 0"}}><span style={{fontSize:10,background:"var(--baseo-heroTag, #443A70)",color:mint,padding:"6px 10px",borderRadius:5}}>{names[q.from]} · BASE {q.from}</span><div style={{fontFamily:"inherit",fontSize:48,margin:"20px 0 10px"}}>{fmt(q.n,q.from)}</div><p style={{fontSize:12,color:"var(--baseo-onHeroMuted, #C9C2DE)"}}>Quel est ce nombre en {q.to===10?"décimal":q.to===2?"binaire":"hexadécimal"} ?</p></div></Card><label style={{display:"flex",justifyContent:"space-between",fontSize:12,marginBottom:10}}>Ta réponse <span style={{color:muted}}>{names[q.to]} · BASE {q.to}</span></label><input type="text" autoCapitalize="characters" autoCorrect="off" spellCheck={false} enterKeyHint="done" aria-label="Ta réponse" value={answer} onChange={e=>updateAnswer(e.target.value.toUpperCase())} onKeyDown={e=>{if(e.key==="Enter"&&valid(answer,q.to)){e.currentTarget.blur();validate()}}} autoComplete="off" inputMode={q.to===16?"text":"numeric"} style={{boxSizing:"border-box",width:"100%",padding:15,border:"1.5px solid var(--baseo-inputBorder, #7561C3)",borderRadius:13,fontFamily:"inherit",fontSize:28,color:ink,background:"var(--baseo-surface)",outlineColor:"var(--baseo-accent, #6951C6)"}}/><Small>Utilise uniquement {q.to===2?"0 et 1":q.to===10?"les chiffres de 0 à 9":"0 à 9 et A à F"}.</Small><div style={{height:12}}/><Button disabled={!valid(answer,q.to)} onClick={validate}>Valider <Icon name="check"/></Button><div style={{height:10}}/><Button light onClick={next}>Passer sans répondre</Button></>:<><Card green={q.correct}><span style={{fontSize:13,color:q.correct?"var(--baseo-success, #398878)":"var(--baseo-error, #B35D7B)"}}>{q.correct?"Bonne réponse !":"Pas tout à fait. On t’explique."}</span><h2 style={{fontFamily:"inherit",fontWeight:600}}>{fmt(q.n,q.from)}<sub>{q.from}</sub> = {fmtAnswer(q.n,q.to)}<sub>{q.to}</sub></h2><Small>Ta réponse : {q.answer} · validée</Small></Card><Card>{explain(q)}</Card><Card><strong style={{fontSize:13}}>⅓ de point par bonne réponse</strong><Small>Une bonne réponse vaut exactement ⅓ de point. Une erreur ou une question passée vaut 0. La note est arrondie seulement à l’affichage.</Small></Card><Button onClick={next}>{session.index+1===total?"Voir ma note sur 20":(session.index+1)%6===0?"Cycle suivant · "+groupNames[conversionIndex(session.qs[session.index+1])]:"Question suivante"}<Icon name="arrow"/></Button></>}</div></div>}
+{page==="pause"&&session&&<>{heading("Quitter l’entraînement ?","Aucune sauvegarde",q.answer!==null?"correction":"quiz")}<Card><h2>Tu veux t’arrêter ici ?</h2><Small>Si tu quittes l’entraînement ou recharges la page, tes réponses seront perdues. Rien n’est enregistré.</Small><p>Question {session.index+1} sur {total}</p><Button onClick={()=>navigate(q.answer!==null?"correction":"quiz")}>Continuer l’exercice</Button><div style={{height:12}}/><Button light onClick={()=>navigate("home")}>Quitter sans sauvegarder</Button></Card></>}
+{page==="converter"&&<><h1 style={{fontWeight:600,fontSize:27,letterSpacing:-.7}}>Un nombre, trois bases.</h1><Small>Explore les équivalences, à ton rythme.</Small><Card dark>{segmented(bases,cb,b=>{const n=valid(input,cb)?parseInt(input,cb):0;setCb(b);setInput(fmt(n,b))})}<Small>{names[cb]} · base {cb}</Small><input aria-label="Nombre à convertir" value={input} onChange={e=>setInput(e.target.value.toUpperCase())} style={{width:"100%",border:0,background:"transparent",color:"white",fontFamily:"inherit",fontSize:38,outline:"none",boxSizing:"border-box"}}/><Small>Caractères autorisés : {cb===16?"0–9 et A–F":cb===2?"0 et 1":"0–9"}</Small></Card>{bases.filter(b=>b!==cb).map(b=><Card key={b}><Small>{names[b]} · BASE {b}</Small><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><strong style={{fontFamily:"inherit",fontSize:27}}>{valid(input,cb)?(b===2&&bits?fmt(parseInt(input,cb),b).padStart(8,"0").replace(/(.{4})(?=.)/g,"$1 "):fmt(parseInt(input,cb),b)):"—"}</strong><button aria-label="Copier" onClick={()=>{if(valid(input,cb)&&navigator.clipboard)navigator.clipboard.writeText(fmt(parseInt(input,cb),b)).then(()=>setSaved(true)).catch(()=>setSaved(false))}} style={{border:0,background:pale,color:"var(--baseo-accent, #6951C6)",padding:9,borderRadius:10,cursor:"pointer"}}><Icon name="copy" size={18}/></button></div></Card>)}{!valid(input,cb)&&<Small>Entre un nombre valide dans la base sélectionnée.</Small>}{saved&&<Small>Valeur copiée.</Small>}<label style={{fontSize:12,display:"flex",justifyContent:"space-between",margin:"24px 0"}}>Affichage binaire sur 8 bits <input type="checkbox" checked={bits} onChange={e=>setBits(e.target.checked)}/></label><Card green><strong style={{fontSize:13}}>Les bases, en bref</strong><Small>BIN : 0 et 1 · DÉC : de 0 à 9<br/>HEX : de 0 à 9, puis A = 10 jusqu’à F = 15.</Small></Card></>}
+{(page==="results"||page==="review")&&result&&<>{heading(page==="results"?"Tes déclics en chiffres":"Les corrections","Bilan de cet entraînement",page==="review"?"results":"home")}{page==="results"?<><Card dark><div style={{fontSize:44,color:mint,fontFamily:"inherit"}}>{displayGrade(result.qs)} / 20</div><Small>Note globale · ⅓ de point par bonne réponse</Small><h2>{result.qs.filter(x=>x.correct).length} / {result.qs.length} bonnes réponses</h2><Small>{result.date}</Small></Card><Card><strong style={{fontSize:14}}>Tes six conversions</strong>{groupNames.map((label,i)=>{const questions=result.qs.filter(question=>conversionIndex(question)===i);return <div key={label} style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",padding:"12px 0",borderBottom:i<5?"1px solid var(--baseo-line)":"none",fontSize:11}}><span><strong style={{color:"var(--baseo-accent)",marginRight:7}}>{label}</strong>{groupLabels[i]}</span><strong style={{whiteSpace:"nowrap"}}>{questions.filter(x=>x.correct).length} / 10</strong></div>})}</Card><Card green><strong>Comprends tes erreurs</strong><Small>Relis les corrections pour mieux comprendre.</Small></Card><Button onClick={()=>{setFilter(false);navigate("review")}}>Revoir les corrections <Icon name="arrow"/></Button><div style={{height:12}}/><Button light onClick={()=>{setFilter(true);navigate("review")}}>Revoir mes erreurs</Button><div style={{height:12}}/><Button light onClick={()=>start()}>Recommencer</Button></>:<><label style={{fontSize:13,display:"flex",gap:10,marginBottom:20}}><input type="checkbox" checked={filter} onChange={e=>setFilter(e.target.checked)}/>Erreurs uniquement</label>{result.qs.filter(x=>!filter||!x.correct).map((x,i)=><Card key={i}><Small>{x.correct?"Correcte":x.answer===null?"Non répondue":"Incorrecte"} · Ta réponse : {x.answer||"—"}</Small>{explain(x)}</Card>)}{filter&&result.qs.every(x=>x.correct)&&<Card green>Tout est juste. Bravo !</Card>}<Button onClick={()=>navigate("results")}>Retour aux résultats</Button></>}</>}
+</motion.main></AnimatePresence>{["home","converter"].includes(page)&&<nav className="baseo-nav" aria-label="Navigation principale" style={{display:"flex",background:"var(--baseo-surface)",borderTop:"1px solid var(--baseo-navLine, #EAE7F1)",padding:"12px 8px max(18px, env(safe-area-inset-bottom))",position:"sticky",bottom:0,zIndex:5}}>{[["home","Entraînement","grid"],["converter","Convertisseur","swap"]].map(([p,label,icon])=><button key={p} onClick={()=>navigate(p)} style={{fontFamily:"inherit",flex:1,border:0,background:"none",cursor:"pointer",color:(page===p)?"var(--baseo-accent, #6951C6)":muted,display:"flex",alignItems:"center",flexDirection:"column",gap:7,fontSize:10,fontWeight:page===p?700:400}}><span style={{display:"flex",padding:"4px 15px",borderRadius:20,background:(page===p)?pale:"transparent",transition:"background-color 180ms ease, color 180ms ease"}}><Icon name={icon}/></span>{label}</button>)}</nav>}</div></div></MotionConfig>
+}
+
+
+createRoot(document.getElementById("root")).render(<Baseo />);
+
+</script>
+</body>
+</html>
